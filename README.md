@@ -20,6 +20,8 @@ After this, you can start building IaC with Terraform. Run:
 'docker compose run --rm terraform apply'
 'docker compose run --rm terraform test'
 
+Remember, after closing the Docker project with 'docker compose down' to also remove the 'mycluster' container from Docker. 
+
 Then you can test IAM with: 
 
 'docker compose run --rm terraform output site_deployer_access_key
