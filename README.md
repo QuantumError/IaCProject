@@ -4,6 +4,7 @@ This project features an IaC environment in Docker emulating AWS cloud app basic
 The project has been made with help of Claude and VS Code autocomplete, but all code and architecture has been arranged and reviewed by me.
 
 You can view Grafana monitoring at: http://localhost:3000/ (go to Dashboards, and 'MinIO Storage Metrics').
+![Grafana metrics](img/Grafana.png)
 
 # Walkthrough
 
