@@ -82,7 +82,6 @@ mc cp /tmp/probe.txt deployer/my-sample-website-backups/x.txt
 
 mc cp /tmp/probe.txt logger/my-sample-website-logs/log-entry.txt
 
-# === log-writer: should be DENIED ===
 mc ls logger/my-sample-website-logs
 mc cat logger/my-sample-website-logs/probe.txt
 mc rm logger/my-sample-website-logs/probe.txt
