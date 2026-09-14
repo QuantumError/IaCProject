@@ -1,0 +1,78 @@
+networks:
+  local-cloud:
+    driver: bridge
+  kind:
+    external: true
+
+services:
+  minio:
+    image: minio/minio:latest
+    container_name: minio
+    networks:
+      - local-cloud
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin123
+      MINIO_PROMETHEUS_AUTH_TYPE: public
+    volumes:
+      - minio-data:/data
+    command: server /data --console-address ":9001"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  createbuckets:
+    image: minio/mc:latest
+    container_name: minio-init
+    networks:
+      - local-cloud
+    depends_on:
+      minio:
+        condition: service_healthy
+    entrypoint: >
+      /bin/sh -c "
+      mc alias set local http://minio:9000 minioadmin minioadmin123;
+      mc mb --ignore-existing local/terraform-state;
+      mc version enable local/terraform-state;
+      exit 0;
+      "
+
+  terraform:
+    image: hashicorp/terraform:1.9
+    container_name: terraform
+    networks:
+      - local-cloud
+      - kind
+    working_dir: /workspace/terraform
+    volumes:
+      - ./kubeconfig-internal.yaml:/root/.kube/config:ro
+      - ./terraform:/workspace/terraform
+    entrypoint: ["terraform"]
+
+  traffic-generator:
+    image: python:3.12-slim
+    container_name: traffic-generator
+    networks:
+      - local-cloud
+    depends_on:
+      - minio
+    environment:
+      MINIO_ENDPOINT: http://minio:9000
+      SITE1_BUCKET: my-sample-website
+      SITE2_BUCKET: my-sample-website-2
+      MIN_INTERVAL_SECONDS: "0"
+      MAX_INTERVAL_SECONDS: "60"
+    volumes:
+      - ./scripts/generate_traffic.py:/generate_traffic.py:ro
+    entrypoint: ["python", "/generate_traffic.py"]
+    restart: unless-stopped
+
+volumes:
+  minio-data:
+  prometheus-data:
+  grafana-data:

@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Site 2 — Multi-file Terraform Upload</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <main>
+    <h1>📦 Second Site, Uploaded via <code>fileset()</code></h1>
+    <p>
+      Every file under <code>website2/</code> — HTML, CSS, JS — was discovered
+      by Terraform and uploaded in a single <code>for_each</code> loop,
+      instead of one <code>aws_s3_object</code> block per file.
+    </p>
+    <p id="js-status">JavaScript has not run yet.</p>
+  </main>
+  <script src="js/app.js"></script>
+</body>
+</html>
